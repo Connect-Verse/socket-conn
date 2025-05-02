@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
 	"github.com/rs/cors"
+	"github.com/saransh-g1/socket-conn/internal/grpc/client"
 	"github.com/saransh-g1/socket-conn/internal/pub-sub"
 	"github.com/saransh-g1/socket-conn/internal/room"
 	"github.com/saransh-g1/socket-conn/internal/utils"
@@ -25,7 +27,11 @@ func main() {
     roomRepo:= room.RoomRepository{}
 	roomService:=room.NewRoomService(&roomRepo)
 	rdb:= utils.CreateRedis()
-    
+    grpcClient:= client.ClientServer()
+	if grpcClient==nil{
+		log.Fatalf("error occured while initialising the grpc client")
+	}
+
 	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
     
     userId := r.URL.Query().Get("userId")
@@ -104,4 +110,7 @@ func main() {
 
 	log.Println("WebSocket server listening on :8000")
 	http.ListenAndServe(":8000", handler)
+
+
+	
 }

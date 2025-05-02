@@ -52,8 +52,6 @@ func (r *RoomService) UpdateUser(userId string,conn net.Conn,roomId string) {
 }
 
 
-
-
 func (r *RoomService) DeleteUser(userId string, roomId string) {
 	delete(r.Room[roomId].Conn, userId)
 	var index=-1

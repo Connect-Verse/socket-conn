@@ -30,7 +30,7 @@ func SetPosition(client pb.RemoteServerClient,position *pb.PlayerPosition){
 type metaStruct struct{
 	Id string
 }
-func findPosition(client pb.RemoteServerClient, metaId string) (*pb.PositionResponse,error){
+func FindPosition(client pb.RemoteServerClient, metaId string) (*pb.PositionResponse,error){
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -46,7 +46,7 @@ func findPosition(client pb.RemoteServerClient, metaId string) (*pb.PositionResp
 }
 
 
-func clientServer() *pb.RemoteServerClient{
+func ClientServer() *pb.RemoteServerClient{
 	conn,err:= grpc.NewClient(*serverAddr)
 	if err!=nil {
 		log.Fatal(err)
