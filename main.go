@@ -12,7 +12,6 @@ import (
 	"github.com/saransh-g1/socket-conn/internal/pub-sub"
 	"github.com/saransh-g1/socket-conn/internal/room"
 	"github.com/saransh-g1/socket-conn/internal/utils"
-	"net/http/pprof"
 )
 
 

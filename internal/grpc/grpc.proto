@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package grpc;
+
+option go_package = "github.com/connect-verse/internal/grpc";
+
+service RemoteServer {
+  rpc SetPositions (PlayerPosition) returns (QueryReply);
+  rpc CheckPositions (metaId) returns (PositionResponse);
+}
+
+
+
+message PlayerPosition {
+  string metaId = 1;
+  string roomId = 2;
+  string XPosition = 3;
+  string YPosition = 4;
+}
+
+
+message QueryReply{
+  int32 status = 1;
+  string respose= 2;
+}
+
+message PositionResponse{
+  string metaId = 1;
+  string roomId = 2;
+  string XPosition = 3;
+  string YPosition = 4;
+  int32 status = 5;
+  string response = 6;
+}
+
+message metaId {
+  string Id = 1;
+}
