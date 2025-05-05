@@ -6,14 +6,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
 	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
 	"github.com/rs/cors"
-	"github.com/saransh-g1/socket-conn/internal/grpc/client"
+	// "github.com/saransh-g1/socket-conn/internal/grpc/client"
 	"github.com/saransh-g1/socket-conn/internal/pub-sub"
 	"github.com/saransh-g1/socket-conn/internal/room"
 	"github.com/saransh-g1/socket-conn/internal/utils"
+	// pb "github.com/saransh-g1/socket-conn/internal/grpc"
+	// "google.golang.org/grpc"
+	// "google.golang.org/grpc/credentials/insecure"
 )
 
 
@@ -27,10 +29,20 @@ func main() {
     roomRepo:= room.RoomRepository{}
 	roomService:=room.NewRoomService(&roomRepo)
 	rdb:= utils.CreateRedis()
-    grpcClient:= client.ClientServer()
-	if grpcClient==nil{
-		log.Fatalf("error occured while initialising the grpc client")
-	}
+
+	// var grpcClient pb.RemoteServerClient
+
+	// var opts []grpc.DialOption
+	// opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// grpcConn,err:= grpc.NewClient("localhost:50051",opts...)
+	// if err!=nil {
+	// 	log.Fatal(err)
+	// }
+	// grpcClient = pb.NewRemoteServerClient(grpcConn)
+    // // return &client,conn
+	
+	
+	
 
 	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
     
@@ -50,10 +62,11 @@ func main() {
 		defer func(){
             roomService.DeleteUser(userId,roomId)
 			conn.Close()
+			//grpcConn.Close()
 		}()
 
 			for {
-				
+	
 				//publishing data
 				msg, op, err := wsutil.ReadClientData(conn)
 				if err != nil {
@@ -64,16 +77,16 @@ func main() {
                 pubsub.PublishData(rdb,ctx,msg,roomId)
 				//publishing data
 
+				
+				
 				//subscribing data
-				
-				
-
 			 subMessage,err := sub.RetrieveData(ctx)
-
+             
 			 if err!=nil {
 				log.Print(err)
 				return
 			 }
+
 			 fmt.Printf("Returned to client: %+v\n", subMessage)
 
 			 for _,value:=range roomService.Room[subMessage.RoomId].Conn{
@@ -91,9 +104,15 @@ func main() {
 					log.Print(err)
 					break
 				}
+				 fmt.Print(subMessage)
+				// GRPCClient.SetPosition(grpcClient,&pb.PlayerPosition{
+				// 	MetaId: subMessage.MetaId,
+				// 	RoomId: subMessage.RoomId,
+				// 	XPosition: subMessage.X_position,
+				// 	YPosition: subMessage.Y_position,
+				//  })
 			 }
              	//subscribing data
-
 			}
 		
 	})
@@ -112,5 +131,4 @@ func main() {
 	http.ListenAndServe(":8000", handler)
 
 
-	
 }

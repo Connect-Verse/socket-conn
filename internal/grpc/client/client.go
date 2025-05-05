@@ -1,12 +1,15 @@
-package client
+package GRPCClient
 
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"time"
+
 	pb "github.com/saransh-g1/socket-conn/internal/grpc"
-	"google.golang.org/grpc"
+	// "google.golang.org/grpc"
+	// "google.golang.org/grpc/credentials/insecure"
 )
 
 var (
@@ -17,10 +20,12 @@ func SetPosition(client pb.RemoteServerClient,position *pb.PlayerPosition){
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+    fmt.Print(position)
+	
     set,err:= client.SetPositions(ctx,position)
 
 	if err!=nil {
-		log.Fatalf("sorry error occurred while setting the position")
+		log.Fatal("sorry error occurred while setting the position",err)
 	}
     
 	log.Println(set)
@@ -30,6 +35,7 @@ func SetPosition(client pb.RemoteServerClient,position *pb.PlayerPosition){
 type metaStruct struct{
 	Id string
 }
+
 func FindPosition(client pb.RemoteServerClient, metaId string) (*pb.PositionResponse,error){
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -46,12 +52,8 @@ func FindPosition(client pb.RemoteServerClient, metaId string) (*pb.PositionResp
 }
 
 
-func ClientServer() *pb.RemoteServerClient{
-	conn,err:= grpc.NewClient(*serverAddr)
-	if err!=nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
-	client := pb.NewRemoteServerClient(conn)
-    return &client
-}
+// func ClientServer() (*pb.RemoteServerClient,*grpc.ClientConn){	
+	
+// 	flag.Parse()
+	
+// }
